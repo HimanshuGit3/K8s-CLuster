@@ -1,0 +1,29 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Clone Repo') {
+            steps {
+                git 'https://github.com/HimanshuGit3/K8s-CLuster.git'
+            }
+        }
+        stage('Build Docker Image') {
+            steps {
+                sh 'docker build -t demo-app ./pipeline-app'
+            }
+        }
+        stage('Save Docker Image') {
+            steps {
+                sh 'docker save demo-app -o demo-app.tar'
+            }
+        }
+        stage('Run Ansible Playbook') {
+            steps {
+                sshagent(credentials: ['your-ssh-key-id']) {
+                    sh 'ansible-playbook -i ansible/inventory.ini ansible/playbook.yml'
+                }
+            }
+        }
+    }
+}
+
