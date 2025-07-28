@@ -1,0 +1,14 @@
+- hosts: targets
+  become: yes
+  tasks:
+    - name: Copy Docker image TAR file to remote node
+      copy:
+        src: ../demo-app.tar
+        dest: /tmp/demo-app.tar
+
+    - name: Load image into Docker
+      command: docker load -i /tmp/demo-app.tar
+
+    - name: Run container
+      command: docker run -d -p 5000:5000 demo-app:latest
+
